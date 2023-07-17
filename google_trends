@@ -1,0 +1,83 @@
+from pytrends.request import TrendReq
+import pandas as pd
+from pyarrow import string
+
+
+class trendsgoogle:
+
+    def __init__(self, gets):
+
+        self.pytrends = TrendReq(hl='en-BR', tz=180)
+        self.kw_list = []
+        self.kw_list.append(gets)
+        self.pytrends.build_payload(self.kw_list, cat=0, timeframe='today 1-m', geo='BR', gprop='')
+
+    def trends_search_count(self, date='today 1-m'):
+        """
+        Quantidade de pesquisa por dia
+        Args: data em mes 1, 3 ou 12 sao aceitos
+            data:recebe um int referente a quantidade de mes
+
+        Returns:dataframe de pesquisa do tema por dia durante o perido
+
+        """
+
+        self.pytrends.build_payload(kw_list=self.kw_list, cat=0, timeframe=date, geo='BR', gprop='')
+
+        return self.pytrends.interest_over_time()
+
+
+    def trends_search_relat(self, date='today 1-m'):
+        """
+        Consultas relacionadas
+
+        Args: data em mes 1, 3 ou 12 sao aceitos
+        data: recebe um int referente a quantidade de mes
+
+        Returns: dataframe de Consultas relacionadas por mes
+
+        """
+
+        self.pytrends.build_payload(kw_list=self.kw_list, cat=0, timeframe=date, geo='BR', gprop='')
+        return self.pytrends.related_queries()
+
+    def trends_subject_relat(self, date='today 1-m'):
+        """
+        Tópicos relacionados
+        Args: data em mes 1, 3 ou 12 sao aceitos
+            data: recebe um int referente a quantidade de mes
+
+        Returns: dataframe de Tópicos relacionados por mes
+
+        """
+        self.pytrends.build_payload(kw_list=self.kw_list, cat=0, timeframe=date, geo='BR', gprop='')
+        return self.pytrends.related_topics()
+
+
+    def trends_real_time(self):
+
+        """
+         Tendências de pesquisa em tempo real
+
+         Returns: dataframe de Tendências de pesquisa em tempo real
+
+        """
+
+        return self.pytrends.realtime_trending_searches(pn='BR')
+
+    def trends_moment(self):
+
+        """
+            Pesquisas em alta
+
+        Returns: dataframe de Pesquisas em alta
+
+        """
+
+        return self.pytrends.trending_searches(pn='brazil')
+
+if __name__ == "__main__":
+
+    subject = "Gabriela Rocha"
+    df =trendsgoogle(subject).trends_moment()
+    print(df)
